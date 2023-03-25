@@ -1,0 +1,10 @@
+#ddev-generated
+web_environment:
+  - MSSQL_EXTERNAL_PORT=1433
+  - MSSQL_SA_PASSWORD=
+  - MSSQL_PID=Developer
+
+hooks:
+  post-start:
+   - exec: echo export PATH="$PATH:/opt/mssql-tools/bin" >> ~/.bashrc
+   - exec: source ~/.bashrc
