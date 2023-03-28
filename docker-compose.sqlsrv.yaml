@@ -35,7 +35,9 @@ services:
       # key. For possible options:
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16
       - MSSQL_PID=$MSSQL_PID
+      - MSSQL_HOST=$MSSQL_HOST
       - MSSQL_TCP_PORT=1433
+      - MSSQL_DB_NAME=$MSSQL_DB_NAME
 
       # Sets the default collation for SQL Server. This setting is optional. The
       # current setting is best for Drupal projects. For more information, see:
