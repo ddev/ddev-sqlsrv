@@ -2,8 +2,8 @@
 
 ## #ddev-generated
 ## Description: Installs the Regex database function for compatibility with Drupal version 9 or higher.
-## Usage: drupal-sqlsrv-regex
-## Example: "ddev drupal-sqlsrv-regex"
+## Usage: drupal-regex
+## Example: "ddev drupal-regex"
 
 # This script only needs to be run once for a database.
 
@@ -14,8 +14,8 @@ then
 fi
 
 # The following are changed to allow the installation and execution of the user provided database function.
-/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -d ${MSSQL_DB_NAME} -Q 'EXEC sp_configure \"show advanced options\", 1; RECONFIGURE; EXEC sp_configure \"clr strict security\", 0; RECONFIGURE; EXEC sp_configure \"clr enable\", 1; RECONFIGURE;'
+/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -d ${MSSQL_DB_NAME} -Q 'EXEC sp_configure "show advanced options", 1; RECONFIGURE; EXEC sp_configure "clr strict security", 0; RECONFIGURE; EXEC sp_configure "clr enable", 1; RECONFIGURE;'
 
 # Create the assambly and the function for the Regex helper.
-/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -d ${MSSQL_DB_NAME} -Q 'CREATE ASSEMBLY Regex from \"/RegEx.dll\" WITH PERMISSION_SET = SAFE'
+/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -d ${MSSQL_DB_NAME} -Q 'CREATE ASSEMBLY Regex from "/RegEx.dll" WITH PERMISSION_SET = SAFE'
 /opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -d ${MSSQL_DB_NAME} -Q 'CREATE FUNCTION dbo.REGEXP(@pattern NVARCHAR(100), @matchString NVARCHAR(100)) RETURNS bit EXTERNAL NAME Regex.RegExCompiled.RegExCompiledMatch'

@@ -18,6 +18,16 @@ ddev get ddev/ddev-sqlsrv
 ddev restart
 ```
 
+If in your project you already have a `.ddev/.env` file, you need to add the following lines to it:
+
+```dotenv
+MSSQL_EXTERNAL_PORT=1433
+MSSQL_SA_PASSWORD=Password12!
+MSSQL_PID=Evaluation
+MSSQL_DB_NAME=master
+MSSQL_HOST=localhost
+```
+
 ## Drupal Notice
 
 Drupal CMS needs the database function installed that is mimicking the Regex function as Drupal requires. As a one-time setup for Drupal, install the database function by running the following command from your project's directory:
@@ -34,7 +44,7 @@ This script also changes the setting for the following database variables:
 Drupal also the module `sqlsrv` to be installed as it is providing the database driver for SQL Server. The module can be installed with composer with the following command:
 
 ```bash
-$ php composer require drupal/sqlsrv
+ddev composer require drupal/sqlsrv
 ```
 
 ## Disabling MySQL & MariaSQL
@@ -54,7 +64,6 @@ omit_containers: [db]
 
 * See [.ddev/config.yaml Options](https://ddev.readthedocs.io/en/stable/users/extend/config_yaml/) for additional notes.
 
-
 ## Links with useful information
 
 * [SQL Server docker hub](https://hub.docker.com/_/microsoft-mssql-server)
@@ -68,7 +77,6 @@ omit_containers: [db]
 * [Beakerboy's Drupal Regex database function](https://github.com/Beakerboy/drupal-sqlsrv-regex)
 * [Drupal's module for the SQL Server](https://www.drupal.org/project/sqlsrv)
 * [Github MS drivers for PHP](https://github.com/microsoft/msphpsql)
-
 
 Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#additional-service-configurations-and-add-ons-for-ddev).
 

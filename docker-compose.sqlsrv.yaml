@@ -12,6 +12,7 @@ services:
     user: root
     volumes:
       - sqlsystem:/var/opt/mssql/
+      - .:/mnt/ddev_config
     restart: "no"
     ports:
       - "${MSSQL_EXTERNAL_PORT}:1433"
