@@ -29,14 +29,18 @@ teardown() {
   ddev restart
   # Checks that the sqlsrv drivers for PHP are installed.
   ddev exec "php -i" | grep "sqlsrv"
+  # Checks sqlsrv connection.
+  ddev -s sqlsrv exec "/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -Q 'SELECT name, database_id, create_date FROM master;'" | grep master
 }
 
 @test "install from release" {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
   echo "# ddev get ddev/ddev-sqlsrv with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-  ddev get ddev/ddev-sqlsrv
+  ddev get https://github.com/robertoperuzzo/ddev-sqlsrv/archive/refs/heads/main.tar.gz
   ddev restart >/dev/null
   # Checks that the sqlsrv drivers for PHP are installed.
   ddev exec "php -i" | grep "sqlsrv"
+  # Checks sqlsrv connection.
+  ddev -s sqlsrv exec "/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -Q 'SELECT name, database_id, create_date FROM master;'" | grep master
 }
