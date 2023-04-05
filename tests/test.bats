@@ -5,6 +5,7 @@ setup() {
   mkdir -p $TESTDIR
   export PROJNAME=test-addon-sqlsrv
   export DDEV_NON_INTERACTIVE=true
+  export MSSQL_HOST=localhost
   export MSSQL_EXTERNAL_PORT=1433
   export MSSQL_SA_PASSWORD=Password12!
   export MSSQL_PID=Developer
