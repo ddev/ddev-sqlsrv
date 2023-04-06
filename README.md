@@ -13,6 +13,8 @@ It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/mic
 
 ## Installation
 
+**Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
+
 ```bash
 ddev get robertoperuzzo/ddev-sqlsrv
 ddev restart
