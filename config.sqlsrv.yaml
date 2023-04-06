@@ -1,6 +1,7 @@
 #ddev-generated
 
 disable_settings_management: true
+omit_containers: [db,dba]
 
 hooks:
   post-start:
