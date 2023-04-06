@@ -13,8 +13,10 @@ It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/mic
 
 ## Installation
 
+**Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
+
 ```bash
-ddev get ddev/ddev-sqlsrv
+ddev get robertoperuzzo/ddev-sqlsrv
 ddev restart
 ```
 
@@ -33,7 +35,7 @@ MSSQL_HOST=localhost
 Drupal CMS needs the database function installed that is mimicking the Regex function as Drupal requires. As a one-time setup for Drupal, install the database function by running the following command from your project's directory:
 
 ```bash
-ddev drupal-sqlsrv-regex
+ddev drupal-regex
 ```
 
 This script also changes the setting for the following database variables:
@@ -80,4 +82,4 @@ omit_containers: [db]
 
 Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#additional-service-configurations-and-add-ons-for-ddev).
 
-**Contributed and maintained by [@CONTRIBUTOR](https://github.com/CONTRIBUTOR) based on the original [ddev-contrib recipe](https://github.com/ddev/ddev-contrib/tree/master/docker-compose-services/sqlsrv) by [drupal-daffie](https://github.com/drupal-daffie)**
+**Contributed and maintained by [@robertoperuzzo](https://github.com/robertoperuzzo) based on the original [ddev-contrib recipe](https://github.com/ddev/ddev-contrib/tree/master/docker-compose-services/sqlsrv) by [drupal-daffie](https://github.com/drupal-daffie)**

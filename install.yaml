@@ -22,6 +22,7 @@ project_files:
 - docker-compose.sqlsrv.yaml
 - web-build/Dockerfile.sqlsrv
 - config.sqlsrv.yaml
+- commands/sqlsrv/drupal-regex
 
 # List of files and directories that are copied into the global .ddev directory.
 global_files:

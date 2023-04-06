@@ -1,4 +1,7 @@
 #ddev-generated
+
+disable_settings_management: true
+
 hooks:
   post-start:
    - exec: echo export PATH="$PATH:/opt/mssql-tools/bin" >> ~/.bashrc
