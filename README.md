@@ -35,7 +35,7 @@ MSSQL_HOST=localhost
 Drupal CMS needs the database function installed that is mimicking the Regex function as Drupal requires. As a one-time setup for Drupal, install the database function by running the following command from your project's directory:
 
 ```bash
-ddev drupal-sqlsrv-regex
+ddev drupal-regex
 ```
 
 This script also changes the setting for the following database variables:
