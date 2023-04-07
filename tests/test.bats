@@ -31,7 +31,7 @@ teardown() {
   # Checks that the sqlsrv drivers for PHP are installed.
   ddev exec "php -i" | grep "sqlsrv"
   # Checks sqlsrv connection.
-  ddev -s sqlsrv exec "/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -Q 'SELECT name, database_id, create_date FROM master;'" | grep master
+  ddev -s sqlsrv exec "/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -Q 'SELECT name, database_id, create_date FROM sys.databases;'" | grep master
 }
 
 @test "install from release" {
@@ -43,5 +43,5 @@ teardown() {
   # Checks that the sqlsrv drivers for PHP are installed.
   ddev exec "php -i" | grep "sqlsrv"
   # Checks sqlsrv connection.
-  ddev -s sqlsrv exec "/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -Q 'SELECT name, database_id, create_date FROM master;'" | grep master
+  ddev -s sqlsrv exec "/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -Q 'SELECT name, database_id, create_date FROM sys.databases;'" | grep master
 }
