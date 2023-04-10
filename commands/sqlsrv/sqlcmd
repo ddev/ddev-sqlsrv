@@ -1,0 +1,8 @@
+#!/bin/bash
+
+## #ddev-generated
+## Description: The sqlcmd utility lets you enter Transact-SQL statements, system procedures, and script files.
+## Usage: sqlcmd
+## Example: "ddev sqlcmd"
+
+/opt/mssql-tools/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -U SA -d ${MSSQL_DB_NAME}

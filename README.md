@@ -49,6 +49,9 @@ Drupal also the module `sqlsrv` to be installed as it is providing the database 
 ddev composer require drupal/sqlsrv
 ```
 
+**For Drupal 9.4+ you need the patch #4 posted in the issue [Call to a member function fetchField() on null
+](https://www.drupal.org/project/sqlsrv/issues/3291199)**
+
 ## Disabling MySQL & MariaSQL
 
 * If your project only uses a SQL Server database, you can disable the MySql & MariaDb services.

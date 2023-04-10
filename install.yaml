@@ -23,6 +23,7 @@ project_files:
 - web-build/Dockerfile.sqlsrv
 - config.sqlsrv.yaml
 - commands/sqlsrv/drupal-regex
+- commands/sqlsrv/sqlcmd
 
 # List of files and directories that are copied into the global .ddev directory.
 global_files:
@@ -41,9 +42,9 @@ post_install_actions:
   #ddev-generated
   MSSQL_EXTERNAL_PORT=1433
   MSSQL_SA_PASSWORD=Password12!
-  MSSQL_PID=Evaluation
+  MSSQL_PID=Developer
   MSSQL_DB_NAME=master
-  MSSQL_HOST=localhost
+  MSSQL_HOST=sqlsrv
   END
 
 # Advanced usage - yaml files can be read in and then used as go template actions
