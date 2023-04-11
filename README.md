@@ -27,7 +27,7 @@ MSSQL_EXTERNAL_PORT=1433
 MSSQL_SA_PASSWORD=Password12!
 MSSQL_PID=Evaluation
 MSSQL_DB_NAME=master
-MSSQL_HOST=localhost
+MSSQL_HOST=sqlsrv
 ```
 
 ## Drupal Notice
