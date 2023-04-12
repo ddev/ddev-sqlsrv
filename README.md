@@ -50,7 +50,7 @@ Drupal also required the [`sqlsrv` module](https://www.drupal.org/project/sqlsrv
 ddev composer require drupal/sqlsrv
 ```
 
-**For Drupal 9.4+ you need the patch #4 posted in the issue [Call to a member function fetchField() on null
+**There is an open issue for Drupal 9.4+ installations. Until merged, you need to apply [patch #4](https://www.drupal.org/project/sqlsrv/issues/3291199#comment-14576456), see [Call to a member function fetchField() on null
 ](https://www.drupal.org/project/sqlsrv/issues/3291199)**
 
 ## Disabling MySQL & MariaSQL
