@@ -44,7 +44,7 @@ This script also changes the setting for the following database variables:
 * `clr strict security` will be set to 0
 * `clr enable` will be set to 1
 
-Drupal also required the `sqlsrv` module to be installed as it is provides the database driver for SQL Server. The module can be installed with composer with the following command:
+Drupal also required the [`sqlsrv` module](https://www.drupal.org/project/sqlsrv) to be installed as it is provides the database driver for SQL Server. The module can be installed with composer with the following command:
 
 ```bash
 ddev composer require drupal/sqlsrv
