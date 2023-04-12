@@ -20,7 +20,7 @@ ddev get robertoperuzzo/ddev-sqlsrv
 ddev restart
 ```
 
-If in your project you already have a `.ddev/.env` file, you need to add the following lines to it:
+If your project you already has a `.ddev/.env` file, you need to add the following lines to it:
 
 ```dotenv
 MSSQL_EXTERNAL_PORT=1433
@@ -39,11 +39,12 @@ ddev drupal-regex
 ```
 
 This script also changes the setting for the following database variables:
+
 * `show advanced options` will be set to 1
 * `clr strict security` will be set to 0
 * `clr enable` will be set to 1
 
-Drupal also the module `sqlsrv` to be installed as it is providing the database driver for SQL Server. The module can be installed with composer with the following command:
+Drupal also required the `sqlsrv` module to be installed as it is provides the database driver for SQL Server. The module can be installed with composer with the following command:
 
 ```bash
 ddev composer require drupal/sqlsrv
