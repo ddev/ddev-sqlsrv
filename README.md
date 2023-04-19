@@ -20,7 +20,7 @@ ddev get robertoperuzzo/ddev-sqlsrv
 ddev restart
 ```
 
-If in your project you already have a `.ddev/.env` file, you need to add the following lines to it:
+If your project already has a `.ddev/.env` file, you need to add the following lines to it:
 
 ```dotenv
 MSSQL_EXTERNAL_PORT=1433
@@ -39,35 +39,28 @@ ddev drupal-regex
 ```
 
 This script also changes the setting for the following database variables:
+
 * `show advanced options` will be set to 1
 * `clr strict security` will be set to 0
 * `clr enable` will be set to 1
 
-Drupal also the module `sqlsrv` to be installed as it is providing the database driver for SQL Server. The module can be installed with composer with the following command:
+Drupal also required the [`sqlsrv` module](https://www.drupal.org/project/sqlsrv) to be installed as it is provides the database driver for SQL Server. The module can be installed with composer with the following command:
 
 ```bash
 ddev composer require drupal/sqlsrv
 ```
 
-**For Drupal 9.4+ you need the patch #4 posted in the issue [Call to a member function fetchField() on null
+**There is an open issue for Drupal 9.4+ installations. Until merged, you need to apply [patch #4](https://www.drupal.org/project/sqlsrv/issues/3291199#comment-14576456), see [Call to a member function fetchField() on null
 ](https://www.drupal.org/project/sqlsrv/issues/3291199)**
 
-## Disabling MySQL & MariaSQL
+## Manually enabling MySQL/MariaDB
 
-* If your project only uses a SQL Server database, you can disable the MySql & MariaDb services.
-* Run the following command from your project root.
+**This addons disables the default database by automatically adding `omit_containers: [db,dba]` in the `config.sqlsrv.yaml`**
 
-```bash
-ddev config --omit-containers db
-```
+If your project needs to use both MariaDB and MS SQL Server databases, you have to remove `#ddev-generated` and
+`omit_containers: [db,dba]` from `config.sqlsrv.yaml`.
 
-* Alternatively, you can update your project's `.ddev/config.yaml` directly by updating the following line:
-
-```yaml
-omit_containers: [db]
-```
-
-* See [.ddev/config.yaml Options](https://ddev.readthedocs.io/en/stable/users/extend/config_yaml/) for additional notes.
+See [.ddev/config.yaml Options](https://ddev.readthedocs.io/en/stable/users/extend/config_yaml/) for additional notes.
 
 ## Links with useful information
 
