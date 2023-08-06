@@ -38,7 +38,7 @@ teardown() {
   set -eu -o pipefail
   cd ${TESTDIR} || ( printf "unable to cd to ${TESTDIR}\n" && exit 1 )
   echo "# ddev get ddev/ddev-sqlsrv with project ${PROJNAME} in ${TESTDIR} ($(pwd))" >&3
-  ddev get robertoperuzzo/ddev-sqlsrv
+  ddev get ddev/ddev-sqlsrv
   ddev restart >/dev/null
   # Checks that the sqlsrv drivers for PHP are installed.
   ddev exec "php -i" | grep "sqlsrv"
