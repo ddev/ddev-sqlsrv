@@ -11,9 +11,10 @@
 This add-on quickly installs the MS SQL server into a DDEV project.
 It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/microsoft-mssql-server) image.
 
-You have to keep in mind that:
-* https://github.com/microsoft/mssql-docker/issues/734
-* https://github.com/microsoft/mssql-docker/issues/802
+You have to keep in mind that the [mssql-docker](https://github.com/microsoft/mssql-docker) does not natively work on M1 (arm64).
+Some workarounds are described in the following threads:
+* [Does not work on Mac M1](https://github.com/microsoft/mssql-docker/issues/734)
+* [MSSQL container for aarch64 (arm64) for better performance](https://github.com/microsoft/mssql-docker/issues/802)
 
 ## Installation
 
