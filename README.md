@@ -1,4 +1,4 @@
-[![tests](https://github.com/robertoperuzzo/ddev-sqlsrv/actions/workflows/tests.yml/badge.svg)](https://github.com/robertoperuzzo/ddev-sqlsrv/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
+[![tests](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
 
 # ddev-sqlsrv <!-- omit in toc -->
 
@@ -16,7 +16,7 @@ It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/mic
 **Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
 
 ```bash
-ddev get robertoperuzzo/ddev-sqlsrv
+ddev get ddev/ddev-sqlsrv
 ddev restart
 ```
 
