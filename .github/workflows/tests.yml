@@ -23,10 +23,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  # Allow ddev get to use a github token to prevent rate limiting by tests
-  DDEV_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   tests:
     defaults:
