@@ -16,11 +16,24 @@ pre_install_actions:
     echo "This package does not work on arm64 machines";
     exit 1;
   fi
+- |
+  # If there was an existing .ddev/web-build/Dockerfile.sqlsrv we need to remove it
+  #ddev-nodisplay
+  #ddev-description:Check for existing Dockerfile.sqlsrv
+  if [ -f .ddev/web-build/Dockerfile.sqlsrv ]; then
+    if grep "#ddev-generated" .ddev/web-build/Dockerfile.sqlsrv; then
+      echo "Removing Dockerfile.sqlsrv from previous version of this add-on"
+      rm .ddev/web-build/Dockerfile.sqlsrv
+    else 
+      echo "Dockerfile.sqlsrv needs to be removed but has been modified by the user. Please check it and remove it"
+      exit 2;
+    fi
+  fi
 
 # List of files and directories listed that are copied into project .ddev directory.
 project_files:
 - docker-compose.sqlsrv.yaml
-- web-build/Dockerfile.sqlsrv
+- web-build/pre.Dockerfile.sqlsrv
 - config.sqlsrv.yaml
 - commands/sqlsrv/drupal-regex
 - commands/sqlsrv/sqlcmd
