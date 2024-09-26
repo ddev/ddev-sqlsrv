@@ -34,7 +34,7 @@ jobs:
         ddev_version: [stable, HEAD]
       fail-fast: false
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: ddev/github-action-add-on-test@v2
