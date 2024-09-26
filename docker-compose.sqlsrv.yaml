@@ -4,8 +4,8 @@ services:
     container_name: ddev-${DDEV_SITENAME}-sqlsrv
     hostname: ddev-${DDEV_SITENAME}-sqlsrv
 
-    # For possible options: https://hub.docker.com/_/microsoft-mssql-server.
-    # This does not yet work with Apple M1. For more details:
+    # For available options look at https://hub.docker.com/_/microsoft-mssql-server.
+    # This image that does not work with Apple M1 yet. For more details:
     # - https://github.com/microsoft/mssql-docker/issues/734
     # - https://github.com/microsoft/mssql-docker/issues/802
     image: mcr.microsoft.com/mssql/server:2019-CU12-ubuntu-20.04
