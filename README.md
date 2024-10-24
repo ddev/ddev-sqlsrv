@@ -20,8 +20,21 @@ Some workarounds are described in the following threads:
 
 **Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
 
+For DDEV v1.23.5 or above run
+
+```bash
+ddev add-on get ddev/ddev-sqlsrv
+```
+
+For earlier versions of DDEV run
+
 ```bash
 ddev get ddev/ddev-sqlsrv
+```
+
+Then restart your project
+
+```bash
 ddev restart
 ```
 
