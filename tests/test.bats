@@ -42,8 +42,9 @@ setup() {
 }
 
 health_checks() {
-  run ddev exec "php -i | grep sqlsrv"
+  run ddev php -i
   assert_success
+  assert_output --partial "sqlsrv"
 
   run ddev -s sqlsrv exec "/opt/mssql-tools18/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -C -Q 'SELECT name, database_id, create_date FROM sys.databases;'"
   assert_success
