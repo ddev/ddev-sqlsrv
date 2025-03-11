@@ -6,7 +6,7 @@ pre_install_actions:
     # https://github.com/microsoft/mssql-docker/issues/734#issuecomment-1382358649
     #ddev-nodisplay
     #ddev-description:Check architecture type for incompatible arm64 type
-    if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
+    if [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
       echo "This package does not work on arm64 machines"
       if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ]; then
         exit 1
