@@ -1,5 +1,5 @@
 #ddev-generated
-ARG odbc_version=2.3.7
+ARG odbc_version=2.3.11
 
 ENV PATH="${PATH}:/opt/mssql-tools/bin"
 RUN (apt-get update || true) && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests apt-utils curl gnupg2 ca-certificates
@@ -19,7 +19,7 @@ RUN (apt-get update || true) && DEBIAN_FRONTEND=noninteractive apt-get install -
     unixodbc-dev=$odbc_version \
     locales
 
-RUN ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y msodbcsql18 mssql-tools
+RUN ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y msodbcsql18 mssql-tools18
 
 # Change the PHP version to what you want. It is currently set to version 8.0.
 RUN pecl channel-update pecl.php.net
