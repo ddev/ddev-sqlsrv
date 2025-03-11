@@ -12,9 +12,21 @@ pre_install_actions:
   # https://github.com/microsoft/mssql-docker/issues/734#issuecomment-1382358649
   #ddev-nodisplay
   #ddev-description:Check architecture type for incompatible arm64 type
-  if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
-    echo "This package does not work on arm64 machines";
-    exit 1;
+  # If cpu is Apple branded, use arch binary to check if x86_64 code can run
+  if [[ "$(sysctl -n machdep.cpu.brand_string)" == *'Apple'* ]]; then
+    if arch -x86_64 /usr/bin/true 2> /dev/null; then
+      echo "To make this package work on arm64 machines, Rosetta is used.";
+    else
+      echo "This package does not work on arm64 machines, unless Rosetta is enabled.";
+      echo "If needed, run /usr/sbin/softwareupdate –install-rosetta –agree-to-license";
+      echo "Make sure Rosetta is enabled in your Docker provider.";
+      exit 1;
+    fi
+  else
+    if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
+      echo "This package does not work on arm64 machines";
+      exit 1;
+    fi
   fi
 - |
   # If there was an existing .ddev/web-build/Dockerfile.sqlsrv we need to remove it
