@@ -4,6 +4,6 @@ disable_settings_management: true
 omit_containers: [db]
 
 hooks:
-  post-start:
-   - exec: echo export PATH="$PATH:/opt/mssql-tools/bin" >> ~/.bashrc
-   - exec: source ~/.bashrc
+    post-start:
+        - exec: echo export PATH="$PATH:/opt/mssql-tools18/bin" >> ~/.bashrc
+        - exec: source ~/.bashrc

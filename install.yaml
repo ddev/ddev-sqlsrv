@@ -1,67 +1,43 @@
 name: sqlsrv
 
-# List of actions to run before installing the addon.
 pre_install_actions:
-# Make sure we have a ddev version that can support what we do here
-- |
-  #ddev-nodisplay
-  #ddev-description:Checking DDEV version
-  (ddev debug capabilities | grep ddev-get-yaml-interpolation >/dev/null) || (echo "Please upgrade DDEV to v1.21.4+ for appropriate capabilities" && false)
-- |
-  # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
-  # https://github.com/microsoft/mssql-docker/issues/734#issuecomment-1382358649
-  #ddev-nodisplay
-  #ddev-description:Check architecture type for incompatible arm64 type
-  if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
-    echo "This package does not work on arm64 machines";
-    exit 1;
-  fi
-- |
-  # If there was an existing .ddev/web-build/Dockerfile.sqlsrv we need to remove it
-  #ddev-nodisplay
-  #ddev-description:Check for existing Dockerfile.sqlsrv
-  if [ -f .ddev/web-build/Dockerfile.sqlsrv ]; then
-    if grep "#ddev-generated" .ddev/web-build/Dockerfile.sqlsrv; then
-      echo "Removing Dockerfile.sqlsrv from previous version of this add-on"
-      rm .ddev/web-build/Dockerfile.sqlsrv
-    else 
-      echo "Dockerfile.sqlsrv needs to be removed but has been modified by the user. Please check it and remove it"
-      exit 2;
+  - |
+    # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
+    # https://github.com/microsoft/mssql-docker/issues/734#issuecomment-1382358649
+    #ddev-nodisplay
+    #ddev-description:Check architecture type for incompatible arm64 type
+    if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
+      echo "This package does not work on arm64 machines"
+      exit 1
     fi
-  fi
+  - |
+    # If there was an existing .ddev/web-build/Dockerfile.sqlsrv we need to remove it
+    #ddev-nodisplay
+    #ddev-description:Check for existing Dockerfile.sqlsrv
+    if [ -f .ddev/web-build/Dockerfile.sqlsrv ]; then
+      if grep -q "#ddev-generated" .ddev/web-build/Dockerfile.sqlsrv; then
+        echo "Removing Dockerfile.sqlsrv from previous version of this add-on"
+        rm -f .ddev/web-build/Dockerfile.sqlsrv
+      else
+        echo "Dockerfile.sqlsrv needs to be removed but has been modified by the user. Please check it and remove it"
+        exit 2
+      fi
+    fi
+  - |
+    # If there was an existing .ddev/.env we need to ask users to use .ddev/.env.sqlsrv
+    #ddev-nodisplay
+    #ddev-description:Check for existing .env
+    if [ -f .ddev/.env ] && grep -q "#ddev-generated" .ddev/.env; then
+      echo "Move ddev-sqlsrv related values from .ddev/.env to .ddev/.env.sqlsrv"
+      echo "Or remove .ddev/.env completely to use the defaults"
+      exit 3
+    fi
 
-# List of files and directories listed that are copied into project .ddev directory.
 project_files:
-- docker-compose.sqlsrv.yaml
-- web-build/pre.Dockerfile.sqlsrv
-- config.sqlsrv.yaml
-- commands/sqlsrv/drupal-regex
-- commands/sqlsrv/sqlcmd
+  - docker-compose.sqlsrv.yaml
+  - web-build/pre.Dockerfile.sqlsrv
+  - config.sqlsrv.yaml
+  - commands/sqlsrv/drupal-regex
+  - commands/sqlsrv/sqlcmd
 
-# List of files and directories that are copied into the global .ddev directory.
-global_files:
-
-# List of actions to run after installing the addon.
-post_install_actions:
-- |
-  #ddev-nodisplay
-  if [ -f .ddev/.env ] && ! grep '#ddev-generated' .ddev/.env; then
-    echo "Existing .ddev/.env does not have #ddev-generated, so it can't be updated"
-    exit 2
-  fi
-- |
-  #ddev-nodisplay
-  cat <<-END > .env
-  #ddev-generated
-  MSSQL_EXTERNAL_PORT=1433
-  MSSQL_SA_PASSWORD=Password12!
-  MSSQL_PID=Developer
-  MSSQL_DB_NAME=master
-  MSSQL_HOST=sqlsrv
-  END
-
-# Advanced usage - yaml files can be read in and then used as go template actions
-# in pre_install_actions and post_install_actions
-# See example in
-# https://github.com/rfay/ddev/blob/20220606_yaml_read_experiment/cmd/ddev/cmd/testdata/TestCmdGetComplex/recipe/install.yaml
-yaml_read_files:
+ddev_version_constraint: '>= v1.24.2'

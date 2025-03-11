@@ -2,13 +2,12 @@
 services:
   sqlsrv:
     container_name: ddev-${DDEV_SITENAME}-sqlsrv
-    hostname: ddev-${DDEV_SITENAME}-sqlsrv
 
     # For available options look at https://hub.docker.com/_/microsoft-mssql-server.
     # This image that does not work with Apple M1 yet. For more details:
     # - https://github.com/microsoft/mssql-docker/issues/734
     # - https://github.com/microsoft/mssql-docker/issues/802
-    image: mcr.microsoft.com/mssql/server:2019-CU12-ubuntu-20.04
+    image: ${MSSQL_DOCKER_IMAGE:-mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04}
 
     user: root
     volumes:
@@ -16,7 +15,7 @@ services:
       - .:/mnt/ddev_config
     restart: "no"
     ports:
-      - "${MSSQL_EXTERNAL_PORT}:1433"
+      - "${MSSQL_EXTERNAL_PORT:-1433}:1433"
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
@@ -31,27 +30,23 @@ services:
       # As a result you cannot login with the "SA" user account.
       # The password for the SA account needs to follow the following policy:
       # https://learn.microsoft.com/en-us/sql/relational-databases/security/password-policy?view=sql-server-ver16
-      - MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD:-Password12!}
 
       # The following setting is for selecting the SQL Server edition or product
       # key. For possible options:
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16
-      - MSSQL_PID=$MSSQL_PID
-      - MSSQL_HOST=$MSSQL_HOST
+      - MSSQL_PID=${MSSQL_PID:-Developer}
+      - MSSQL_HOST=${MSSQL_HOST:-sqlsrv}
       - MSSQL_TCP_PORT=1433
-      - MSSQL_DB_NAME=$MSSQL_DB_NAME
+      - MSSQL_DB_NAME=${MSSQL_DB_NAME:-master}
 
       # Sets the default collation for SQL Server. This setting is optional. The
       # current setting is best for Drupal projects. For more information, see:
       # https://docs.microsoft.com/en-us/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver16
-      - MSSQL_COLLATION=LATIN1_GENERAL_100_CI_AS_SC_UTF8
+      - MSSQL_COLLATION=${MSSQL_COLLATION:-LATIN1_GENERAL_100_CI_AS_SC_UTF8}
 
       # For more possible environment variables that can be set, see:
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16
-
-  web:
-    links:
-    - sqlsrv:sqlsrv
 
 volumes:
   sqlsystem:

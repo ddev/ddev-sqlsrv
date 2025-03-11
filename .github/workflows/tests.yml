@@ -15,30 +15,22 @@ on:
         required: false
         default: false
 
-# Required permissions for keep-alive, used by ddev/github-action-add-on-test
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# This is required for "gautamkrishnar/keepalive-workflow", see "ddev/github-action-add-on-test"
 permissions:
   actions: write
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   tests:
-    defaults:
-      run:
-        shell: bash
-
     strategy:
       matrix:
         ddev_version: [stable, HEAD]
       fail-fast: false
 
-    # We need to use the ubuntu-20.04 image because the sqlsrv service uses the
-    # mcr.microsoft.com/mssql/server:2019-CU12-ubuntu-20.04 image.
-    # See the issue https://github.com/ddev/ddev-sqlsrv/issues/29 for more
-    # details.
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - uses: ddev/github-action-add-on-test@v2

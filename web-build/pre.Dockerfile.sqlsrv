@@ -1,4 +1,5 @@
 #ddev-generated
+
 ENV PATH="${PATH}:/opt/mssql-tools18/bin"
 RUN (apt-get update || true) && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests apt-utils curl gnupg2 ca-certificates
 
@@ -27,5 +28,3 @@ RUN echo 'extension=sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/sqls
 RUN echo 'extension=pdo_sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/pdo_sqlsrv.ini
 
 RUN phpenmod -v $DDEV_PHP_VERSION sqlsrv pdo_sqlsrv
-# Something about this install has set /run/php to 755, so php-fpm can't write pidfile
-RUN chmod 777 /run/php

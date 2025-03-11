@@ -1,4 +1,4 @@
-[![tests](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
+[![tests](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2025.svg)
 
 # ddev-sqlsrv <!-- omit in toc -->
 
@@ -20,32 +20,35 @@ Some workarounds are described in the following threads:
 
 **Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
 
-For DDEV v1.23.5 or above run
-
 ```bash
 ddev add-on get ddev/ddev-sqlsrv
-```
-
-For earlier versions of DDEV run
-
-```bash
-ddev get ddev/ddev-sqlsrv
-```
-
-Then restart your project
-
-```bash
 ddev restart
 ```
 
-If your project already has a `.ddev/.env` file, you need to add the following lines to it:
+Used defaults:
 
 ```dotenv
+MSSQL_DOCKER_IMAGE=mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04
 MSSQL_EXTERNAL_PORT=1433
 MSSQL_SA_PASSWORD=Password12!
 MSSQL_PID=Evaluation
 MSSQL_DB_NAME=master
 MSSQL_HOST=sqlsrv
+MSSQL_COLLATION=LATIN1_GENERAL_100_CI_AS_SC_UTF8
+```
+
+If you want to override them, for example, use a different port:
+
+```bash
+ddev dotenv set .ddev/.env.sqlsrv --mssql-external-port=1434
+ddev restart
+```
+
+Or change the password:
+
+```bash
+ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password='myNewPassword'
+ddev restart
 ```
 
 ## Drupal Notice
@@ -73,12 +76,12 @@ ddev composer require drupal/sqlsrv
 
 ## Manually enabling MySQL/MariaDB
 
-**This addons disables the default database by automatically adding `omit_containers: [db,dba]` in the `config.sqlsrv.yaml`**
+**This addons disables the default database by automatically adding `omit_containers: [db]` in the `config.sqlsrv.yaml`**
 
 If your project needs to use both MariaDB and MS SQL Server databases, you have to remove `#ddev-generated` and
-`omit_containers: [db,dba]` from `config.sqlsrv.yaml`.
+`omit_containers: [db]` from `config.sqlsrv.yaml`.
 
-See [.ddev/config.yaml Options](https://ddev.readthedocs.io/en/stable/users/extend/config_yaml/) for additional notes.
+See [Config Options](https://ddev.readthedocs.io/en/stable/users/configuration/config/) for additional notes.
 
 ## Links with useful information
 
