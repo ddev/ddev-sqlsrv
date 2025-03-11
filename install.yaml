@@ -8,7 +8,9 @@ pre_install_actions:
     #ddev-description:Check architecture type for incompatible arm64 type
     if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
       echo "This package does not work on arm64 machines"
-      exit 1
+      if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ]; then
+        exit 1
+      fi
     fi
   - |
     # If there was an existing .ddev/web-build/Dockerfile.sqlsrv we need to remove it
