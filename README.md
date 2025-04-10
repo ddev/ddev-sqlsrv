@@ -16,7 +16,9 @@ Some workarounds are described in the following threads:
 
 ## Installation
 
-**Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
+> [!WARNING]
+> Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.
+> (You can try installing it on Rosetta using `DDEV_IGNORE_ARCH_CHECK=true ddev add-on get ddev/ddev-sqlsrv`)
 
 ```bash
 ddev add-on get ddev/ddev-sqlsrv
