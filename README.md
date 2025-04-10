@@ -1,12 +1,10 @@
-[![tests](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml/badge.svg)](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml) ![project is maintained](https://img.shields.io/maintenance/yes/2024.svg)
+[![tests](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/ddev/ddev-sqlsrv/actions/workflows/tests.yml?query=branch%3Amain)
+[![last commit](https://img.shields.io/github/last-commit/ddev/ddev-sqlsrv)](https://github.com/ddev/ddev-sqlsrv/commits)
+[![release](https://img.shields.io/github/v/release/ddev/ddev-sqlsrv)](https://github.com/ddev/ddev-sqlsrv/releases/latest)
 
-# ddev-sqlsrv <!-- omit in toc -->
+# DDEV SQLSRV
 
-* [What is ddev-sqlsrv?](#what-is-ddev-sqlsrv)
-* [Components of the repository](#components-of-the-repository)
-* [Getting started](#getting-started)
-
-## What is ddev-sqlsrv?
+## Overview
 
 This add-on quickly installs the MS SQL server into a DDEV project.
 It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/microsoft-mssql-server) image.
@@ -18,37 +16,25 @@ Some workarounds are described in the following threads:
 
 ## Installation
 
-**Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
-
-For DDEV v1.23.5 or above run
+> [!WARNING]
+> Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.
+> (You can try installing it on Rosetta using `DDEV_IGNORE_ARCH_CHECK=true ddev add-on get ddev/ddev-sqlsrv`)
 
 ```bash
 ddev add-on get ddev/ddev-sqlsrv
-```
-
-For earlier versions of DDEV run
-
-```bash
-ddev get ddev/ddev-sqlsrv
-```
-
-Then restart your project
-
-```bash
 ddev restart
 ```
 
-If your project already has a `.ddev/.env` file, you need to add the following lines to it:
+After installation, make sure to commit the `.ddev` directory to version control.
 
-```dotenv
-MSSQL_EXTERNAL_PORT=1433
-MSSQL_SA_PASSWORD=Password12!
-MSSQL_PID=Evaluation
-MSSQL_DB_NAME=master
-MSSQL_HOST=sqlsrv
-```
+## Usage
 
-## Drupal Notice
+| Command | Description |
+| ------- | ----------- |
+| `ddev sqlcmd` | For Transact-SQL statements, system procedures, and script files |
+| `ddev drupal-regex` | For compatibility with Drupal version 9 or higher |
+
+### Drupal Notice
 
 Drupal CMS needs the database function installed that is mimicking the Regex function as Drupal requires. As a one-time setup for Drupal, install the database function by running the following command from your project's directory:
 
@@ -71,14 +57,48 @@ ddev composer require drupal/sqlsrv
 **There is an open issue for Drupal 9.4+ installations. Until merged, you need to apply [patch #4](https://www.drupal.org/project/sqlsrv/issues/3291199#comment-14576456), see [Call to a member function fetchField() on null
 ](https://www.drupal.org/project/sqlsrv/issues/3291199)**
 
-## Manually enabling MySQL/MariaDB
+### Manually enabling MySQL/MariaDB/PostgreSQL
 
-**This addons disables the default database by automatically adding `omit_containers: [db,dba]` in the `config.sqlsrv.yaml`**
+**This addons disables the default database by automatically adding `omit_containers: [db]` in the `config.sqlsrv.yaml`**
 
 If your project needs to use both MariaDB and MS SQL Server databases, you have to remove `#ddev-generated` and
-`omit_containers: [db,dba]` from `config.sqlsrv.yaml`.
+`omit_containers: [db]` from `config.sqlsrv.yaml`.
 
-See [.ddev/config.yaml Options](https://ddev.readthedocs.io/en/stable/users/extend/config_yaml/) for additional notes.
+See [Config Options](https://ddev.readthedocs.io/en/stable/users/configuration/config/) for additional notes.
+
+## Advanced Customization
+
+Use a different port:
+
+```bash
+ddev dotenv set .ddev/.env.sqlsrv --mssql-external-port=1434
+ddev add-on get ddev/ddev-sqlsrv
+ddev restart
+```
+
+Make sure to commit the `.ddev/.env.sqlsrv` file to version control.
+
+Or change the password:
+
+```bash
+ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password='myNewPassword'
+ddev add-on get ddev/ddev-sqlsrv
+ddev restart
+```
+
+Make sure to commit the `.ddev/.env.sqlsrv` file to version control.
+
+All customization options (use with caution):
+
+| Variable | Flag | Default |
+| -------- | ---- | ------- |
+| `MSSQL_DOCKER_IMAGE` | `--mssql-docker-image` | `mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04` |
+| `MSSQL_EXTERNAL_PORT` | `--mssql-external-port` | `1433` |
+| `MSSQL_SA_PASSWORD` | `--mssql-sa-password` | `Password12!` |
+| `MSSQL_PID` | `--mssql-pid` | `Evaluation` |
+| `MSSQL_DB_NAME` | `--mssql-db-name` | `master` |
+| `MSSQL_HOST` | `--mssql-host` | `sqlsrv` |
+| `MSSQL_COLLATION` | `--mssql-collation` | `LATIN1_GENERAL_100_CI_AS_SC_UTF8` |
 
 ## Links with useful information
 
@@ -94,6 +114,8 @@ See [.ddev/config.yaml Options](https://ddev.readthedocs.io/en/stable/users/exte
 * [Drupal's module for the SQL Server](https://www.drupal.org/project/sqlsrv)
 * [Github MS drivers for PHP](https://github.com/microsoft/msphpsql)
 
-Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/latest/users/extend/additional-services/#additional-service-configurations-and-add-ons-for-ddev).
+Note that more advanced techniques are discussed in [DDEV docs](https://ddev.readthedocs.io/en/stable/users/extend/additional-services/).
+
+## Credits
 
 **Contributed and maintained by [@robertoperuzzo](https://github.com/robertoperuzzo) based on the original [ddev-contrib recipe](https://github.com/ddev/ddev-contrib/tree/master/docker-compose-services/sqlsrv) by [drupal-daffie](https://github.com/drupal-daffie)**

@@ -1,25 +1,23 @@
 #ddev-generated
-ARG odbc_version=2.3.7
 
-ENV PATH="${PATH}:/opt/mssql-tools/bin"
+ENV PATH="${PATH}:/opt/mssql-tools18/bin"
 RUN (apt-get update || true) && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests apt-utils curl gnupg2 ca-certificates
 
-RUN curl -sSL -O https://packages.microsoft.com/keys/microsoft.asc
-RUN apt-key add <microsoft.asc
-RUN curl -sSL -o /etc/apt/sources.list.d/mssql-release.list https://packages.microsoft.com/config/debian/11/prod.list
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+RUN curl -sSL -o /etc/apt/sources.list.d/mssql-release.list https://packages.microsoft.com/config/debian/12/prod.list
 
 RUN (apt-get update || true) && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests \
     build-essential \
     dialog \
     php-pear \
     php$DDEV_PHP_VERSION-dev \
-    unixodbc=$odbc_version \
-    odbcinst=$odbc_version \
-    odbcinst1debian2=$odbc_version \
-    unixodbc-dev=$odbc_version \
+    unixodbc \
+    odbcinst \
+    odbcinst1debian2 \
+    unixodbc-dev \
     locales
 
-RUN ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y msodbcsql18 mssql-tools
+RUN ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y msodbcsql18 mssql-tools18
 
 # Change the PHP version to what you want. It is currently set to version 8.0.
 RUN pecl channel-update pecl.php.net
@@ -30,5 +28,3 @@ RUN echo 'extension=sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/sqls
 RUN echo 'extension=pdo_sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/pdo_sqlsrv.ini
 
 RUN phpenmod -v $DDEV_PHP_VERSION sqlsrv pdo_sqlsrv
-# Something about this install has set /run/php to 755, so php-fpm can't write pidfile
-RUN chmod 777 /run/php
