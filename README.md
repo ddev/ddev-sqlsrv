@@ -31,8 +31,8 @@ After installation, make sure to commit the `.ddev` directory to version control
 
 | Command | Description |
 | ------- | ----------- |
-| `ddev sqlcmd` | The sqlcmd utility lets you enter Transact-SQL statements, system procedures, and script files |
-| `ddev drupal-regex` | Installs the Regex database function for compatibility with Drupal version 9 or higher |
+| `ddev sqlcmd` | For Transact-SQL statements, system procedures, and script files |
+| `ddev drupal-regex` | For compatibility with Drupal version 9 or higher |
 
 ### Drupal Notice
 
