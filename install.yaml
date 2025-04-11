@@ -8,11 +8,8 @@ pre_install_actions:
     #ddev-description:Check architecture type for incompatible arm64 type
     if [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
       echo "This package does not work on arm64 machines"
-      if [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
+      if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ] && [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
         echo "Warning: On Apple Silicon, this add-on uses an amd64 image and requires Rosetta, and may not be reliable.";
-      fi
-      if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ]; then
-        exit 1
       fi
     fi
   - |
