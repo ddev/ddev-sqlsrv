@@ -1,5 +1,4 @@
 #ddev-generated
-#ARG odbc_version=2.3.12
 
 ENV PATH="${PATH}:/opt/mssql-tools18/bin"
 RUN apt-get -qq update && DEBIAN_FRONTEND=noninteractive apt-get install -qq -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests apt-utils curl gnupg2 ca-certificates
