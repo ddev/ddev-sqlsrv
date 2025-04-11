@@ -3,11 +3,10 @@ services:
   sqlsrv:
     container_name: ddev-${DDEV_SITENAME}-sqlsrv
 
-    # For available options look at https://hub.docker.com/_/microsoft-mssql-server.
-    # This image that does not work with Apple M1 yet. For more details:
-    # - https://github.com/microsoft/mssql-docker/issues/734
-    # - https://github.com/microsoft/mssql-docker/issues/802
-    image: ${MSSQL_DOCKER_IMAGE:-mcr.microsoft.com/mssql/server:2022-CU17-ubuntu-22.04}
+    # For possible options: https://hub.docker.com/_/microsoft-mssql-server.
+    # This does not yet work with Apple Silicon. See: https://github.com/microsoft/mssql-docker/issues/734
+    image: mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04
+    platform: linux/amd64
 
     user: root
     volumes:
