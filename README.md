@@ -14,8 +14,6 @@ However, this version of the add-on is able to use the Microsoft amd64 images wh
 
 ## Installation
 
-**Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
-
 > [!WARNING]
 > Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.
 > (You can try installing it on Rosetta using `DDEV_IGNORE_ARCH_CHECK=true ddev add-on get ddev/ddev-sqlsrv`)
@@ -55,6 +53,7 @@ ddev composer require drupal/sqlsrv
 
 ## Disabling MySQL/MariaDB
 
+If you don't want the default database engine to run, add `omit_containers[db]` to your `.ddev/config.yaml`.
 
 If your project needs to use both MariaDB and MS SQL Server databases, you have to remove `#ddev-generated` and
 `omit_containers: [db]` from `config.sqlsrv.yaml`.
@@ -80,7 +79,6 @@ ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password='myNewPassword'
 ddev add-on get ddev/ddev-sqlsrv
 ddev restart
 ```
-
 Make sure to commit the `.ddev/.env.sqlsrv` file to version control.
 
 All customization options (use with caution):
