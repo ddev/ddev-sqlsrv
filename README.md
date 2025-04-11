@@ -9,12 +9,12 @@
 This add-on quickly installs the MS SQL server into a DDEV project.
 It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/microsoft-mssql-server) image.
 
-You have to keep in mind that the [mssql-docker](https://github.com/microsoft/mssql-docker) does not natively work on M1 (arm64).
-Some workarounds are described in the following threads:
-* [Does not work on Mac M1](https://github.com/microsoft/mssql-docker/issues/734)
-* [MSSQL container for aarch64 (arm64) for better performance](https://github.com/microsoft/mssql-docker/issues/802)
+Warning: the [mssql-docker](https://github.com/microsoft/mssql-docker) image does not natively work on Apple Silicon (arm64).
+However, this version of the add-on is able to use the Microsoft amd64 images where [Rosetta 2](https://support.apple.com/en-us/102527) is installed, enabled, and configured in your Docker provider.
 
 ## Installation
+
+**Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.**
 
 > [!WARNING]
 > Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.
@@ -27,7 +27,6 @@ ddev restart
 
 After installation, make sure to commit the `.ddev` directory to version control.
 
-## Usage
 
 | Command | Description |
 | ------- | ----------- |
@@ -54,12 +53,8 @@ Drupal also required the [`sqlsrv` module](https://www.drupal.org/project/sqlsrv
 ddev composer require drupal/sqlsrv
 ```
 
-**There is an open issue for Drupal 9.4+ installations. Until merged, you need to apply [patch #4](https://www.drupal.org/project/sqlsrv/issues/3291199#comment-14576456), see [Call to a member function fetchField() on null
-](https://www.drupal.org/project/sqlsrv/issues/3291199)**
+## Disabling MySQL/MariaDB
 
-### Manually enabling MySQL/MariaDB/PostgreSQL
-
-**This addons disables the default database by automatically adding `omit_containers: [db]` in the `config.sqlsrv.yaml`**
 
 If your project needs to use both MariaDB and MS SQL Server databases, you have to remove `#ddev-generated` and
 `omit_containers: [db]` from `config.sqlsrv.yaml`.
