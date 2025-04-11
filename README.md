@@ -57,10 +57,6 @@ If you don't want the default database engine to run, add `omit_containers[db]` 
 
 See [Config Options](https://ddev.readthedocs.io/en/stable/users/configuration/config/) for additional notes.
 
-## Exposing the Sqlsrv port to the host for use by host-side applications
-
-
-
 ## Advanced Customization
 
 You can the Sqlsrv server to host port for use by host-side applications. This is not useful for PHP applications that operate inside the container, and it means you can only run one project using `ddev-sqlsrv` at a time.
