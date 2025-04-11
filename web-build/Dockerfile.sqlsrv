@@ -9,19 +9,9 @@ RUN dpkg -i packages-microsoft-prod.deb
 RUN rm packages-microsoft-prod.deb
 RUN apt-get update -qq
 RUN ACCEPT_EULA=Y apt-get install -y msodbcsql18
-# optional: for bcp and sqlcmd
 RUN ACCEPT_EULA=Y apt-get install -y mssql-tools18
 RUN echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
 RUN source ~/.bashrc
-# optional: for unixODBC development headers
-#RUN apt-get install -y unixodbc-dev
-# optional: kerberos library for debian-slim distributions
-#RUN apt-get install -y libgssapi-krb5-2
-
-
-#RUN curl -sSL -O https://packages.microsoft.com/keys/microsoft.asc
-#RUN apt-key add <microsoft.asc
-#RUN curl -sSL -o /etc/apt/sources.list.d/mssql-release.list https://packages.microsoft.com/config/debian/11/prod.list
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests \
     build-essential \
@@ -31,8 +21,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg:
     unixodbc-common \
     unixodbc-dev \
     locales
-
-#RUN ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y msodbcsql18 mssql-tools18
 
 # Change the PHP version to what you want. It is currently set to version 8.0.
 RUN pecl channel-update pecl.php.net
