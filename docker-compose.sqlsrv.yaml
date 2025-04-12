@@ -2,9 +2,7 @@
 services:
   sqlsrv:
     container_name: ddev-${DDEV_SITENAME}-sqlsrv
-
-    # For possible options: https://hub.docker.com/_/microsoft-mssql-server.
-    # This does not yet work with Apple Silicon. See: https://github.com/microsoft/mssql-docker/issues/734
+    # On macOS Apple Silicon, this only works with Rosetta enabled
     image: mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04
     platform: linux/amd64
 
@@ -13,8 +11,6 @@ services:
       - sqlsystem:/var/opt/mssql/
       - .:/mnt/ddev_config
     restart: "no"
-#    ports:
-#      - "${MSSQL_EXTERNAL_PORT}:1433"
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
       com.ddev.approot: $DDEV_APPROOT
