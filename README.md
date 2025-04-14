@@ -14,9 +14,7 @@ However, this version of the add-on is able to use the Microsoft amd64 images wh
 
 ## Installation
 
-> [!WARNING]
-> Due to lack of upstream support, this add-on can only be used with amd64 machines, and is not usable on arm64 machines like Apple Silicon computers.
-> (You can try installing it on Rosetta using `DDEV_IGNORE_ARCH_CHECK=true ddev add-on get ddev/ddev-sqlsrv`)
+On ARM64/Apple Silicon machines, make sure to use a Docker provider with Rosetta 2 support enabled.
 
 ```bash
 ddev add-on get ddev/ddev-sqlsrv
