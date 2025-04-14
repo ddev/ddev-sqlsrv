@@ -25,6 +25,7 @@ ddev restart
 
 After installation, make sure to commit the `.ddev` directory to version control.
 
+## Usage
 
 | Command | Description |
 | ------- | ----------- |
