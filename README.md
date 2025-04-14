@@ -9,10 +9,8 @@
 This add-on quickly installs the MS SQL server into a DDEV project.
 It is based on the [mcr.microsoft.com/mssql/server](https://hub.docker.com/_/microsoft-mssql-server) image.
 
-You have to keep in mind that the [mssql-docker](https://github.com/microsoft/mssql-docker) does not natively work on M1 (arm64).
-Some workarounds are described in the following threads:
-* [Does not work on Mac M1](https://github.com/microsoft/mssql-docker/issues/734)
-* [MSSQL container for aarch64 (arm64) for better performance](https://github.com/microsoft/mssql-docker/issues/802)
+Warning: the [mssql-docker](https://github.com/microsoft/mssql-docker) image does not natively work on Apple Silicon (arm64).
+However, this version of the add-on is able to use the Microsoft amd64 images where [Rosetta 2](https://support.apple.com/en-us/102527) is installed, enabled, and configured in your Docker provider.
 
 ## Installation
 
@@ -54,38 +52,42 @@ Drupal also required the [`sqlsrv` module](https://www.drupal.org/project/sqlsrv
 ddev composer require drupal/sqlsrv
 ```
 
-**There is an open issue for Drupal 9.4+ installations. Until merged, you need to apply [patch #4](https://www.drupal.org/project/sqlsrv/issues/3291199#comment-14576456), see [Call to a member function fetchField() on null
-](https://www.drupal.org/project/sqlsrv/issues/3291199)**
+## Disabling MySQL/MariaDB
 
-### Manually enabling MySQL/MariaDB/PostgreSQL
-
-**This addons disables the default database by automatically adding `omit_containers: [db]` in the `config.sqlsrv.yaml`**
-
-If your project needs to use both MariaDB and MS SQL Server databases, you have to remove `#ddev-generated` and
-`omit_containers: [db]` from `config.sqlsrv.yaml`.
+If you don't want the default database engine to run, add `omit_containers[db]` to your `.ddev/config.yaml`.
 
 See [Config Options](https://ddev.readthedocs.io/en/stable/users/configuration/config/) for additional notes.
 
 ## Advanced Customization
 
-Use a different port:
+You can the Sqlsrv server to host port for use by host-side applications. This is not useful for PHP applications that operate inside the container, and it means you can only run one project using `ddev-sqlsrv` at a time.
+
+Add a `docker-compose.sqlsrv_extra.yaml` with:
+
+```yaml
+services:
+  sqlsrv:
+    ports:
+      - "${MSSQL_EXTERNAL_PORT:-1433}:1433"
+```
+
+and set an alternate bind port like 1499 instead of 1433:
 
 ```bash
-ddev dotenv set .ddev/.env.sqlsrv --mssql-external-port=1434
+ddev dotenv set .ddev/.env.sqlsrv --mssql-external-port=1499
 ddev add-on get ddev/ddev-sqlsrv
 ddev restart
 ```
 
-Make sure to commit the `.ddev/.env.sqlsrv` file to version control.
+Commit the `.ddev/.env.sqlsrv` and `docker-compose.sqlsrv_extra.yaml` files to version control.
 
-Or change the password:
+To change the password:
 
 ```bash
 ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password='myNewPassword'
 ddev add-on get ddev/ddev-sqlsrv
 ddev restart
 ```
-
 Make sure to commit the `.ddev/.env.sqlsrv` file to version control.
 
 All customization options (use with caution):
