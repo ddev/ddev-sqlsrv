@@ -3,7 +3,7 @@ services:
   sqlsrv:
     container_name: ddev-${DDEV_SITENAME}-sqlsrv
     # On macOS Apple Silicon, this only works with Rosetta enabled
-    image: mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04
+    image: ${MSSQL_DOCKER_IMAGE:-mcr.microsoft.com/mssql/server:2022-CU18-ubuntu-22.04}
     platform: linux/amd64
 
     user: root
