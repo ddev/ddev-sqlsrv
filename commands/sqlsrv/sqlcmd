@@ -4,5 +4,6 @@
 ## Description: The sqlcmd utility lets you enter Transact-SQL statements, system procedures, and script files.
 ## Usage: sqlcmd
 ## Example: "ddev sqlcmd"
+## ExecRaw: true
 
-/opt/mssql-tools18/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -U SA -C -d ${MSSQL_DB_NAME} $@
+/opt/mssql-tools18/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -U SA -C -d ${MSSQL_DB_NAME} "$@"
