@@ -28,7 +28,7 @@ After installation, make sure to commit the `.ddev` directory to version control
 
 | Command | Description |
 | ------- | ----------- |
-| `ddev sqlcmd` | For Transact-SQL statements, system procedures, and script files.<br> Example T-SQL statement: <br> `ddev sqlcmd -d <mydatabasename> -Q "SELECT * FROM <MyTable>"` |
+| `ddev sqlcmd` | For Transact-SQL statements, system procedures, and script files.<br>See examples for T-SQL statements in `ddev help sqlcmd` |
 | `ddev drupal-regex` | For compatibility with Drupal version 9 or higher |
 
 ### Drupal Notice
