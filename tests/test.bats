@@ -37,7 +37,6 @@ setup() {
   run ddev start -y
   assert_success
 
-  export MSSQL_HOST=sqlsrv
   export MSSQL_SA_PASSWORD=Password12345!
 }
 
@@ -46,7 +45,7 @@ health_checks() {
   assert_success
   assert_output --partial "sqlsrv"
 
-  run ddev -s sqlsrv exec "/opt/mssql-tools18/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -S ${MSSQL_HOST} -U SA -C -Q 'SELECT name, database_id, create_date FROM sys.databases;'"
+  run ddev sqlcmd -Q "SELECT name, database_id, create_date FROM sys.databases;"
   assert_success
   assert_output --partial "master"
 }
@@ -59,7 +58,11 @@ teardown() {
 
 @test "install from directory" {
   set -eu -o pipefail
-  ddev dotenv set .ddev/.env.sqlsrv --mssql-host=${MSSQL_HOST} --mssql-sa-password=${MSSQL_SA_PASSWORD}
+
+  run ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password=${MSSQL_SA_PASSWORD}
+  assert_success
+  assert_file_exist .ddev/.env.sqlsrv
+
   echo "# ddev add-on get ${DIR} with project ${PROJNAME} in $(pwd)" >&3
   run ddev add-on get "${DIR}"
   assert_success
@@ -71,7 +74,6 @@ teardown() {
 # bats test_tags=release
 @test "install from release" {
   set -eu -o pipefail
-  ddev dotenv set .ddev/.env.sqlsrv --mssql-host=${MSSQL_HOST} --mssql-sa-password=${MSSQL_SA_PASSWORD}
   echo "# ddev add-on get ${GITHUB_REPO} with project ${PROJNAME} in $(pwd)" >&3
   run ddev add-on get "${GITHUB_REPO}"
   assert_success

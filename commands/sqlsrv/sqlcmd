@@ -3,6 +3,7 @@
 ## #ddev-generated
 ## Description: The sqlcmd utility lets you enter Transact-SQL statements, system procedures, and script files.
 ## Usage: sqlcmd
-## Example: "ddev sqlcmd"
+## Example: ddev sqlcmd -Q "SELECT * FROM <MyTable>;"\nddev sqlcmd -d <AnotherDatabase> -Q "SELECT * FROM <MyTable>;"
+## ExecRaw: true
 
-/opt/mssql-tools18/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -U SA -C -d ${MSSQL_DB_NAME} $@
+/opt/mssql-tools18/bin/sqlcmd -P ${MSSQL_SA_PASSWORD} -U SA -C -d ${MSSQL_DB_NAME} "$@"
