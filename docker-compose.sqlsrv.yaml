@@ -10,10 +10,11 @@ services:
     volumes:
       - sqlsystem:/var/opt/mssql/
       - .:/mnt/ddev_config
+      - ddev-global-cache:/mnt/ddev-global-cache
     restart: "no"
     labels:
       com.ddev.site-name: ${DDEV_SITENAME}
-      com.ddev.approot: $DDEV_APPROOT
+      com.ddev.approot: ${DDEV_APPROOT}
     environment:
 
       # With the following setting you agree with Microsoft's end user license
@@ -42,6 +43,23 @@ services:
 
       # For more possible environment variables that can be set, see:
       # https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-environment-variables?view=sql-server-ver16
+
+      - SQLCMDSERVER=sqlsrv
+      - SQLCMDUSER=SA
+      - SQLCMDPASSWORD=${MSSQL_SA_PASSWORD:-Password12!}
+      - SQLCMDDBNAME=${MSSQL_DB_NAME:-master}
+
+    x-ddev:
+      describe-info: |
+        Pass: ${MSSQL_SA_PASSWORD:-Password12!}
+      ssh-shell: bash
+
+  web:
+    environment:
+      - SQLCMDSERVER=sqlsrv
+      - SQLCMDUSER=SA
+      - SQLCMDPASSWORD=${MSSQL_SA_PASSWORD:-Password12!}
+      - SQLCMDDBNAME=${MSSQL_DB_NAME:-master}
 
 volumes:
   sqlsystem:

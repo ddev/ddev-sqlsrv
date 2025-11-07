@@ -1,13 +1,8 @@
 #ddev-generated
-
 disable_settings_management: true
-
 hooks:
   post-start:
-  - exec: |
-      if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ] && [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
-        echo "Warning: On Apple Silicon, this add-on uses an amd64 image and requires Rosetta, and may not be reliable.";
-      fi
-
-  - exec: echo export PATH="$PATH:/opt/mssql-tools18/bin" >> ~/.bashrc
-  - exec: source ~/.bashrc
+    - exec: |
+        if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ] && [ "$(arch)" = "arm64" -o "$(arch)" = "aarch64" ]; then
+          echo "Warning: On Apple Silicon, this add-on uses an amd64 image and requires Rosetta, and may not be reliable.";
+        fi
