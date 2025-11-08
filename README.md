@@ -30,6 +30,8 @@ After installation, make sure to commit the `.ddev` directory to version control
 | ------- | ----------- |
 | `ddev sqlcmd` | For Transact-SQL statements, system procedures, and script files.<br>See examples for T-SQL statements in `ddev help sqlcmd` |
 | `ddev drupal-regex` | For compatibility with Drupal version 9 or higher |
+| `ddev describe` | Describe the SQL Server container and its configuration |
+| `ddev logs -s sqlsrv` | View the SQL Server container logs |
 
 ### Drupal Notice
 

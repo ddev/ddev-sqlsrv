@@ -2,29 +2,26 @@ name: sqlsrv
 
 pre_install_actions:
   - |
-    # Using #ddev-nodisplay tells ddev to be quiet about this action and not show it or its output.
     # https://github.com/microsoft/mssql-docker/issues/734#issuecomment-1382358649
-    #ddev-nodisplay
     #ddev-description:Check architecture type for incompatible arm64 type
     if [ "${DDEV_IGNORE_ARCH_CHECK:-false}" != "true" ] && [ "$(uname -m)" = "arm64" -o "$(uname -m)" = "aarch64" ]; then
       echo "Warning: On Apple Silicon, this add-on uses an amd64 image and requires Rosetta, and may not be reliable.";
     fi
   - |
-    # If there was an existing .ddev/web-build/Dockerfile.sqlsrv we need to remove it
-    #ddev-nodisplay
-    #ddev-description:Check for existing Dockerfile.sqlsrv
-    if [ -f .ddev/web-build/Dockerfile.sqlsrv ]; then
-      if grep -q "#ddev-generated" .ddev/web-build/Dockerfile.sqlsrv; then
-        echo "Removing Dockerfile.sqlsrv from previous version of this add-on"
-        rm -f .ddev/web-build/Dockerfile.sqlsrv
+    # If there was an existing .ddev/web-build/pre.Dockerfile.sqlsrv we need to remove it
+    #ddev-description:Check for existing pre.Dockerfile.sqlsrv
+    file="$DDEV_APPROOT/.ddev/web-build/pre.Dockerfile.sqlsrv"
+    if [ -f "$file" ]; then
+      if grep -q "#ddev-generated" "$file"; then
+        echo "Removing pre.Dockerfile.sqlsrv from previous version of this add-on"
+        rm -f "$file"
       else
-        echo "Dockerfile.sqlsrv needs to be removed but has been modified by the user. Please check it and remove it"
+        echo "pre.Dockerfile.sqlsrv needs to be removed but has been modified by the user. Please check it and remove it"
         exit 2
       fi
     fi
   - |
     # If there was an existing .ddev/.env we need to ask users to use .ddev/.env.sqlsrv
-    #ddev-nodisplay
     #ddev-description:Check for existing .env
     if [ -f .ddev/.env ] && grep -q "#ddev-generated" .ddev/.env; then
       echo "Move ddev-sqlsrv related values from .ddev/.env to .ddev/.env.sqlsrv"
@@ -34,9 +31,9 @@ pre_install_actions:
 
 project_files:
   - docker-compose.sqlsrv.yaml
-  - web-build/pre.Dockerfile.sqlsrv
+  - web-build/Dockerfile.sqlsrv
   - config.sqlsrv.yaml
   - commands/sqlsrv/drupal-regex
   - commands/sqlsrv/sqlcmd
 
-ddev_version_constraint: '>= v1.24.3'
+ddev_version_constraint: '>= v1.24.10'

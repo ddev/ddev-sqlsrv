@@ -1,0 +1,37 @@
+#ddev-generated
+
+RUN source /etc/os-release && \
+    curl -fsSL -O "https://packages.microsoft.com/config/debian/${VERSION_ID}/packages-microsoft-prod.deb" && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm -f packages-microsoft-prod.deb
+
+RUN (apt-get update || true) && ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests \
+    msodbcsql18 \
+    mssql-tools18 \
+    build-essential \
+    dialog \
+    php-pear \
+    php$DDEV_PHP_VERSION-dev \
+    unixodbc-common \
+    unixodbc-dev \
+    locales && \
+    apt-get autoremove -y && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN SQLSRV_SCRIPT=$(printf '%s\n' \
+        'export SQLSRV_BIN="/opt/mssql-tools18/bin"' \
+        'case ":$PATH:" in' \
+        '    *":$SQLSRV_BIN:"*) ;;' \
+        '    *) PATH="$SQLSRV_BIN:$PATH" ;;' \
+        'esac' \
+        'export PATH') && \
+    echo "$SQLSRV_SCRIPT" >> /etc/bash.bashrc && \
+    echo "$SQLSRV_SCRIPT" >> /etc/bash.nointeractive.bashrc
+
+RUN (pecl channel-update pecl.php.net || true) && \
+    pecl -d php_suffix=$DDEV_PHP_VERSION install sqlsrv && \
+    pecl -d php_suffix=$DDEV_PHP_VERSION install pdo_sqlsrv && \
+    echo 'extension=sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/sqlsrv.ini && \
+    echo 'extension=pdo_sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/pdo_sqlsrv.ini && \
+    phpenmod -v $DDEV_PHP_VERSION sqlsrv pdo_sqlsrv

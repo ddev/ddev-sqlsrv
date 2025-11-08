@@ -41,19 +41,29 @@ setup() {
 }
 
 health_checks() {
-  run ddev php -i
+  run ddev php -m
   assert_success
   assert_output --partial "sqlsrv"
 
   run ddev sqlcmd -Q "SELECT name, database_id, create_date FROM sys.databases;"
   assert_success
   assert_output --partial "master"
+
+  run ddev exec sqlcmd -C -Q "SELECT name, database_id, create_date FROM sys.databases;"
+  assert_success
+  assert_output --partial "master"
 }
 
 teardown() {
   set -eu -o pipefail
-  ddev delete -Oy ${PROJNAME} >/dev/null 2>&1
-  [ "${TESTDIR}" != "" ] && rm -rf ${TESTDIR}
+  ddev delete -Oy "${PROJNAME}" >/dev/null 2>&1
+  # Persist TESTDIR if running inside GitHub Actions. Useful for uploading test result artifacts
+  # See example at https://github.com/ddev/github-action-add-on-test#preserving-artifacts
+  if [ -n "${GITHUB_ENV:-}" ]; then
+    [ -e "${GITHUB_ENV:-}" ] && echo "TESTDIR=${HOME}/tmp/${PROJNAME}" >> "${GITHUB_ENV}"
+  else
+    [ "${TESTDIR}" != "" ] && rm -rf "${TESTDIR}"
+  fi
 }
 
 @test "install from directory" {
@@ -62,6 +72,20 @@ teardown() {
   run ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password=${MSSQL_SA_PASSWORD}
   assert_success
   assert_file_exist .ddev/.env.sqlsrv
+
+  echo "# ddev add-on get ${DIR} with project ${PROJNAME} in $(pwd)" >&3
+  run ddev add-on get "${DIR}"
+  assert_success
+  run ddev restart -y
+  assert_success
+  health_checks
+}
+
+@test "install from directory php8.1" {
+  set -eu -o pipefail
+
+  run ddev config --php-version=8.1
+  assert_success
 
   echo "# ddev add-on get ${DIR} with project ${PROJNAME} in $(pwd)" >&3
   run ddev add-on get "${DIR}"
