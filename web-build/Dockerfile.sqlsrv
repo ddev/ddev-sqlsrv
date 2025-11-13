@@ -1,6 +1,7 @@
 #ddev-generated
 
 RUN source /etc/os-release && \
+    if [ "${VERSION_ID}" = "13" ]; then export VERSION_ID="12"; fi && \
     curl -fsSL -O "https://packages.microsoft.com/config/debian/${VERSION_ID}/packages-microsoft-prod.deb" && \
     dpkg -i packages-microsoft-prod.deb && \
     rm -f packages-microsoft-prod.deb
