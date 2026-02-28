@@ -31,8 +31,16 @@ RUN SQLSRV_SCRIPT=$(printf '%s\n' \
     echo "$SQLSRV_SCRIPT" >> /etc/bash.nointeractive.bashrc
 
 RUN (pecl channel-update pecl.php.net || true) && \
-    pecl -d php_suffix=$DDEV_PHP_VERSION install sqlsrv && \
-    pecl -d php_suffix=$DDEV_PHP_VERSION install pdo_sqlsrv && \
+    # The SQLSRV extension versions are tied to the PHP version, 
+    # so we need to conditionally install a version of sqlsrv/pdo_sqlsrv based on the PHP version:
+    # - For PHP 8.1 and 8.2: pin to version 5.12.0 (the last compatible release)
+    # - For PHP 8.3+: use the latest version
+    case "$DDEV_PHP_VERSION" in \
+      8.1|8.2) SQLSRV_VER="-5.12.0" ;; \
+      *) SQLSRV_VER="" ;; \
+    esac && \
+    pecl -d php_suffix=$DDEV_PHP_VERSION install sqlsrv${SQLSRV_VER} && \
+    pecl -d php_suffix=$DDEV_PHP_VERSION install pdo_sqlsrv${SQLSRV_VER} && \
     echo 'extension=sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/sqlsrv.ini && \
     echo 'extension=pdo_sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/pdo_sqlsrv.ini && \
     phpenmod -v $DDEV_PHP_VERSION sqlsrv pdo_sqlsrv
