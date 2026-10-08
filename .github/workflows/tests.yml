@@ -34,6 +34,10 @@ jobs:
         # They run with Rosetta on macOS, but not on the ubuntu-26.04-arm runner.
         os: [ubuntu-latest]
         ddev_version: [stable, HEAD]
+        # The "release" tests only run on schedule and workflow_dispatch.
+        bats_tag: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+          && fromJSON('["php70-php73", "php74-php82", "php83-php85", "release"]')
+          || fromJSON('["php70-php73", "php74-php82", "php83-php85"]') }}
       fail-fast: false
 
     runs-on: ${{ matrix.os }}
@@ -46,3 +50,4 @@ jobs:
           debug_enabled: ${{ github.event.inputs.debug_enabled }}
           addon_repository: ${{ env.GITHUB_REPOSITORY }}
           addon_ref: ${{ env.GITHUB_REF }}
+          test_command: bats tests --filter-tags ${{ matrix.bats_tag }}

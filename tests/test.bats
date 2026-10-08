@@ -36,14 +36,22 @@ setup() {
   assert_success
   run ddev start -y
   assert_success
-
-  export MSSQL_SA_PASSWORD=Password12345!
 }
 
 health_checks() {
   run ddev php -m
   assert_success
-  assert_output --partial "sqlsrv"
+  assert_line "sqlsrv"
+  assert_line "pdo_sqlsrv"
+
+  # Both extensions must be able to connect, which needs a compatible ODBC driver
+  run ddev php -r '$c = new PDO("sqlsrv:Server=sqlsrv;TrustServerCertificate=1", getenv("SQLCMDUSER"), getenv("SQLCMDPASSWORD")); echo $c->query("SELECT 42")->fetchColumn();'
+  assert_success
+  assert_output "42"
+
+  run ddev php -r '$c = sqlsrv_connect("sqlsrv", ["UID" => getenv("SQLCMDUSER"), "PWD" => getenv("SQLCMDPASSWORD"), "TrustServerCertificate" => 1]); echo $c ? "connected" : print_r(sqlsrv_errors(), true);'
+  assert_success
+  assert_output "connected"
 
   run ddev sqlcmd -Q "SELECT name, database_id, create_date FROM sys.databases;"
   assert_success
@@ -52,6 +60,25 @@ health_checks() {
   run ddev exec sqlcmd -C -Q "SELECT name, database_id, create_date FROM sys.databases;"
   assert_success
   assert_output --partial "master"
+}
+
+# Installs the add-on from the directory for the given PHP version and runs health checks.
+install_from_directory() {
+  local php_version="$1"
+
+  run ddev config --php-version="${php_version}"
+  assert_success
+
+  run ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password='Password12345!'
+  assert_success
+  assert_file_exist .ddev/.env.sqlsrv
+
+  echo "# ddev add-on get ${DIR} with PHP ${php_version} in $(pwd)" >&3
+  run ddev add-on get "${DIR}"
+  assert_success
+  run ddev restart -y
+  assert_success
+  health_checks
 }
 
 teardown() {
@@ -66,33 +93,70 @@ teardown() {
   fi
 }
 
-@test "install from directory" {
+# bats test_tags=php70-php73
+@test "install from directory PHP 7.0" {
   set -eu -o pipefail
-
-  run ddev dotenv set .ddev/.env.sqlsrv --mssql-sa-password=${MSSQL_SA_PASSWORD}
-  assert_success
-  assert_file_exist .ddev/.env.sqlsrv
-
-  echo "# ddev add-on get ${DIR} with project ${PROJNAME} in $(pwd)" >&3
-  run ddev add-on get "${DIR}"
-  assert_success
-  run ddev restart -y
-  assert_success
-  health_checks
+  install_from_directory 7.0
 }
 
-@test "install from directory php8.1" {
+# bats test_tags=php70-php73
+@test "install from directory PHP 7.1" {
   set -eu -o pipefail
+  install_from_directory 7.1
+}
 
-  run ddev config --php-version=8.1
-  assert_success
+# bats test_tags=php70-php73
+@test "install from directory PHP 7.2" {
+  set -eu -o pipefail
+  install_from_directory 7.2
+}
 
-  echo "# ddev add-on get ${DIR} with project ${PROJNAME} in $(pwd)" >&3
-  run ddev add-on get "${DIR}"
-  assert_success
-  run ddev restart -y
-  assert_success
-  health_checks
+# bats test_tags=php70-php73
+@test "install from directory PHP 7.3" {
+  set -eu -o pipefail
+  install_from_directory 7.3
+}
+
+# bats test_tags=php74-php82
+@test "install from directory PHP 7.4" {
+  set -eu -o pipefail
+  install_from_directory 7.4
+}
+
+# bats test_tags=php74-php82
+@test "install from directory PHP 8.0" {
+  set -eu -o pipefail
+  install_from_directory 8.0
+}
+
+# bats test_tags=php74-php82
+@test "install from directory PHP 8.1" {
+  set -eu -o pipefail
+  install_from_directory 8.1
+}
+
+# bats test_tags=php74-php82
+@test "install from directory PHP 8.2" {
+  set -eu -o pipefail
+  install_from_directory 8.2
+}
+
+# bats test_tags=php83-php85
+@test "install from directory PHP 8.3" {
+  set -eu -o pipefail
+  install_from_directory 8.3
+}
+
+# bats test_tags=php83-php85
+@test "install from directory PHP 8.4" {
+  set -eu -o pipefail
+  install_from_directory 8.4
+}
+
+# bats test_tags=php83-php85
+@test "install from directory PHP 8.5" {
+  set -eu -o pipefail
+  install_from_directory 8.5
 }
 
 # bats test_tags=release
