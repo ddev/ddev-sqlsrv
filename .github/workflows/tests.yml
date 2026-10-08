@@ -30,7 +30,8 @@ jobs:
   tests:
     strategy:
       matrix:
-        # No arm64: mcr.microsoft.com/mssql/server images are amd64-only
+        # No arm64: mcr.microsoft.com/mssql/server images are amd64-only.
+        # They run with Rosetta on macOS, but not on the ubuntu-26.04-arm runner.
         os: [ubuntu-latest]
         ddev_version: [stable, HEAD]
       fail-fast: false
