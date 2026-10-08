@@ -1,46 +1,66 @@
 #ddev-generated
 
-RUN source /etc/os-release && \
-    if [ "${VERSION_ID}" = "13" ]; then export VERSION_ID="12"; fi && \
-    curl -fsSL -O "https://packages.microsoft.com/config/debian/${VERSION_ID}/packages-microsoft-prod.deb" && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm -f packages-microsoft-prod.deb
+# The sqlsrv/pdo_sqlsrv versions are tied to the PHP version:
+# - PHP 7.0-8.2: use PECL to pin to the last release that supports it, see https://github.com/microsoft/msphpsql/releases
+# - PHP 8.3+: use PIE to install the latest version, see https://github.com/microsoft/msphpsql_sqlsrv
+RUN <<'EOF'
+set -eu -o pipefail
 
-RUN (apt-get update || true) && ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests \
-    msodbcsql18 \
-    mssql-tools18 \
-    build-essential \
-    dialog \
-    php-pear \
-    php$DDEV_PHP_VERSION-dev \
-    unixodbc-common \
-    unixodbc-dev \
-    locales && \
-    apt-get autoremove -y && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+case "${DDEV_PHP_VERSION}" in
+  5.6) echo "sqlsrv/pdo_sqlsrv are not available for PHP ${DDEV_PHP_VERSION} on Linux, use PHP 7.0+" >&2; exit 1 ;;
+  7.0) SQLSRV_VERSION=5.3.0 ;;
+  7.1) SQLSRV_VERSION=5.6.1 ;;
+  7.2) SQLSRV_VERSION=5.8.1 ;;
+  7.3) SQLSRV_VERSION=5.9.0 ;;
+  7.4) SQLSRV_VERSION=5.10.1 ;;
+  8.0) SQLSRV_VERSION=5.11.1 ;;
+  8.1|8.2) SQLSRV_VERSION=5.12.0 ;;
+  *) SQLSRV_VERSION="" ;;
+esac
+case "${DDEV_PHP_VERSION}" in
+  7.0|7.1|7.2|7.3)
+    # sqlsrv/pdo_sqlsrv older than 5.10 don't support ODBC Driver 18
+    MSSQL_PACKAGES="msodbcsql17 mssql-tools"
+    MSSQL_TOOLS_BIN="/opt/mssql-tools/bin"
+    # phpize from PHP 7.0-7.3 generates a configure script that relies on $SED being set
+    export SED=sed
+    ;;
+  *)
+    MSSQL_PACKAGES="msodbcsql18 mssql-tools18"
+    MSSQL_TOOLS_BIN="/opt/mssql-tools18/bin"
+    ;;
+esac
 
-RUN SQLSRV_SCRIPT=$(printf '%s\n' \
-        'export SQLSRV_BIN="/opt/mssql-tools18/bin"' \
-        'case ":$PATH:" in' \
-        '    *":$SQLSRV_BIN:"*) ;;' \
-        '    *) PATH="$SQLSRV_BIN:$PATH" ;;' \
-        'esac' \
-        'export PATH') && \
-    echo "$SQLSRV_SCRIPT" >> /etc/bash.bashrc && \
-    echo "$SQLSRV_SCRIPT" >> /etc/bash.nointeractive.bashrc
+. /etc/os-release
+curl -fsSL -o /tmp/packages-microsoft-prod.deb "https://packages.microsoft.com/config/debian/${VERSION_ID}/packages-microsoft-prod.deb"
+dpkg -i /tmp/packages-microsoft-prod.deb
+rm -f /tmp/packages-microsoft-prod.deb
 
-RUN (pecl channel-update pecl.php.net || true) && \
-    # The SQLSRV extension versions are tied to the PHP version, 
-    # so we need to conditionally install a version of sqlsrv/pdo_sqlsrv based on the PHP version:
-    # - For PHP 8.1 and 8.2: pin to version 5.12.0 (the last compatible release)
-    # - For PHP 8.3+: use the latest version
-    case "$DDEV_PHP_VERSION" in \
-      8.1|8.2) SQLSRV_VER="-5.12.0" ;; \
-      *) SQLSRV_VER="" ;; \
-    esac && \
-    pecl -d php_suffix=$DDEV_PHP_VERSION install sqlsrv${SQLSRV_VER} && \
-    pecl -d php_suffix=$DDEV_PHP_VERSION install pdo_sqlsrv${SQLSRV_VER} && \
-    echo 'extension=sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/sqlsrv.ini && \
-    echo 'extension=pdo_sqlsrv.so' >> /etc/php/$DDEV_PHP_VERSION/mods-available/pdo_sqlsrv.ini && \
-    phpenmod -v $DDEV_PHP_VERSION sqlsrv pdo_sqlsrv
+apt-get update || true
+ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests \
+  ${MSSQL_PACKAGES} \
+  build-essential \
+  dialog \
+  php-pear \
+  "php${DDEV_PHP_VERSION}-dev" \
+  unixodbc-common \
+  unixodbc-dev \
+  locales
+apt-get autoremove -y
+apt-get clean -y
+rm -rf /var/lib/apt/lists/*
+
+ln -sf "${MSSQL_TOOLS_BIN}/sqlcmd" "${MSSQL_TOOLS_BIN}/bcp" /usr/local/bin/
+
+if [ -n "${SQLSRV_VERSION}" ]; then
+  pecl channel-update pecl.php.net || true
+  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "sqlsrv-${SQLSRV_VERSION}" "pdo_sqlsrv-${SQLSRV_VERSION}"
+  echo 'extension=sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/sqlsrv.ini"
+  echo 'extension=pdo_sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/pdo_sqlsrv.ini"
+  phpenmod -v "${DDEV_PHP_VERSION}" sqlsrv pdo_sqlsrv
+else
+  curl -fsSL -o /usr/local/bin/pie https://github.com/php/pie/releases/latest/download/pie.phar
+  chmod +x /usr/local/bin/pie
+  pie install --with-php-config="/usr/bin/php-config${DDEV_PHP_VERSION}" microsoft/sqlsrv microsoft/pdo_sqlsrv
+fi
+EOF
