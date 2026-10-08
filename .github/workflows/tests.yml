@@ -30,8 +30,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        # No arm64: mcr.microsoft.com/mssql/server images are amd64-only
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, ubuntu-26.04-arm]
         ddev_version: [stable, HEAD]
       fail-fast: false
 
