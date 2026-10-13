@@ -1,5 +1,8 @@
 #ddev-generated
 
+# Optional, PIE uses it to avoid GitHub API rate limiting
+ARG GITHUB_TOKEN
+
 # The sqlsrv/pdo_sqlsrv versions are tied to the PHP version:
 # - PHP 7.0-8.2: use PECL to pin to the last release that supports it, see https://github.com/microsoft/msphpsql/releases
 # - PHP 8.3+: use PIE to install the latest version, see https://github.com/microsoft/msphpsql_sqlsrv
@@ -61,6 +64,8 @@ if [ -n "${SQLSRV_VERSION}" ]; then
 else
   curl -fsSL -o /usr/local/bin/pie https://github.com/php/pie/releases/latest/download/pie.phar
   chmod +x /usr/local/bin/pie
+  # An empty GITHUB_TOKEN would be sent as invalid credentials
+  [ -n "${GITHUB_TOKEN:-}" ] || unset GITHUB_TOKEN
   pie install --with-php-config="/usr/bin/php-config${DDEV_PHP_VERSION}" microsoft/sqlsrv microsoft/pdo_sqlsrv
 fi
 EOF
