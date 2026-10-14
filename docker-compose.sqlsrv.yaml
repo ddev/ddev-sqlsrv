@@ -55,6 +55,10 @@ services:
       ssh-shell: bash
 
   web:
+    build:
+      args:
+        # optional, to avoid GitHub API rate limiting when PIE installs sqlsrv/pdo_sqlsrv
+        GITHUB_TOKEN: "${DDEV_GITHUB_TOKEN:-${GH_TOKEN:-${GITHUB_TOKEN:-}}}"
     environment:
       - SQLCMDSERVER=sqlsrv
       - SQLCMDUSER=SA
