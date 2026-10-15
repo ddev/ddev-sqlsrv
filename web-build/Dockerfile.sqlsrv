@@ -37,7 +37,9 @@ dpkg -i /tmp/packages-microsoft-prod.deb
 rm -f /tmp/packages-microsoft-prod.deb
 
 apt-get update || true
-ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y -o Dpkg::Options::="--force-confold" --no-install-recommends --no-install-suggests \
+ACCEPT_EULA=Y DEBIAN_FRONTEND=noninteractive apt-get install -y \
+  -o Dpkg::Options::="--force-confold" \
+  --no-install-recommends --no-install-suggests \
   ${MSSQL_PACKAGES} \
   build-essential \
   dialog \
@@ -59,11 +61,14 @@ if [ -n "${SQLSRV_VERSION}" ]; then
   echo 'extension=pdo_sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/pdo_sqlsrv.ini"
   phpenmod -v "${DDEV_PHP_VERSION}" sqlsrv pdo_sqlsrv
 else
-  curl -fsSL -o /usr/local/bin/pie https://github.com/php/pie/releases/latest/download/pie.phar
+  curl -fsSL -o /usr/local/bin/pie \
+    https://github.com/php/pie/releases/latest/download/pie.phar
   chmod +x /usr/local/bin/pie
   if [ -s /run/secrets/github_token ]; then
-    export COMPOSER_AUTH="{\"github-oauth\":{\"github.com\":\"$(cat /run/secrets/github_token)\"}}"
+    token=$(cat /run/secrets/github_token)
+    export COMPOSER_AUTH="{\"github-oauth\":{\"github.com\":\"${token}\"}}"
   fi
-  pie install --with-php-config="/usr/bin/php-config${DDEV_PHP_VERSION}" microsoft/sqlsrv microsoft/pdo_sqlsrv
+  pie install --with-php-config="/usr/bin/php-config${DDEV_PHP_VERSION}" \
+    microsoft/sqlsrv microsoft/pdo_sqlsrv
 fi
 EOF
