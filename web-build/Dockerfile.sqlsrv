@@ -56,7 +56,9 @@ ln -sf "${MSSQL_TOOLS_BIN}/sqlcmd" "${MSSQL_TOOLS_BIN}/bcp" /usr/local/bin/
 
 if [ -n "${SQLSRV_VERSION}" ]; then
   pecl channel-update pecl.php.net || true
-  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "sqlsrv-${SQLSRV_VERSION}" "pdo_sqlsrv-${SQLSRV_VERSION}"
+  # Install one package per command: pecl exits 0 when installing several packages and only some of them fail
+  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "sqlsrv-${SQLSRV_VERSION}"
+  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "pdo_sqlsrv-${SQLSRV_VERSION}"
   echo 'extension=sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/sqlsrv.ini"
   echo 'extension=pdo_sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/pdo_sqlsrv.ini"
   phpenmod -v "${DDEV_PHP_VERSION}" sqlsrv pdo_sqlsrv
