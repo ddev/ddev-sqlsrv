@@ -2,20 +2,25 @@
 
 # The sqlsrv/pdo_sqlsrv versions are tied to the PHP version:
 # - PHP 7.0-8.2: use PECL to pin to the last release that supports it, see https://github.com/microsoft/msphpsql/releases
-# - PHP 8.3+: use PIE to install the latest version, see https://github.com/microsoft/msphpsql_sqlsrv
+# - PHP 8.3: use PIE to pin to the last release that supports it
+# - PHP 8.4+: use PIE to install the latest version, see https://github.com/microsoft/msphpsql_sqlsrv
 RUN --mount=type=secret,id=github_token <<'EOF'
 set -eu -o pipefail
 
+PECL_VERSION=""
+PIE_VERSION=""
 case "${DDEV_PHP_VERSION}" in
   5.6) echo "sqlsrv/pdo_sqlsrv are not available for PHP ${DDEV_PHP_VERSION} on Linux, use PHP 7.0+" >&2; exit 1 ;;
-  7.0) SQLSRV_VERSION=5.3.0 ;;
-  7.1) SQLSRV_VERSION=5.6.1 ;;
-  7.2) SQLSRV_VERSION=5.8.1 ;;
-  7.3) SQLSRV_VERSION=5.9.0 ;;
-  7.4) SQLSRV_VERSION=5.10.1 ;;
-  8.0) SQLSRV_VERSION=5.11.1 ;;
-  8.1|8.2) SQLSRV_VERSION=5.12.0 ;;
-  *) SQLSRV_VERSION="" ;;
+  7.0) PECL_VERSION=5.3.0 ;;
+  7.1) PECL_VERSION=5.6.1 ;;
+  7.2) PECL_VERSION=5.8.1 ;;
+  7.3) PECL_VERSION=5.9.0 ;;
+  7.4) PECL_VERSION=5.10.1 ;;
+  8.0) PECL_VERSION=5.11.1 ;;
+  8.1|8.2) PECL_VERSION=5.12.0 ;;
+  # 5.14.0 dropped PHP 8.3, but its composer.json still allows it, so PIE would pick it and fail to build
+  8.3) PIE_VERSION=5.13.3 ;;
+  *) PIE_VERSION="*" ;;
 esac
 case "${DDEV_PHP_VERSION}" in
   7.0|7.1|7.2|7.3)
@@ -54,15 +59,15 @@ rm -rf /var/lib/apt/lists/*
 
 ln -sf "${MSSQL_TOOLS_BIN}/sqlcmd" "${MSSQL_TOOLS_BIN}/bcp" /usr/local/bin/
 
-if [ -n "${SQLSRV_VERSION}" ]; then
+if [ -n "${PECL_VERSION}" ]; then
   pecl channel-update pecl.php.net || true
   # Install one package per command: pecl exits 0 when installing several packages and only some of them fail
-  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "sqlsrv-${SQLSRV_VERSION}"
-  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "pdo_sqlsrv-${SQLSRV_VERSION}"
+  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "sqlsrv-${PECL_VERSION}"
+  pecl -d php_suffix="${DDEV_PHP_VERSION}" install "pdo_sqlsrv-${PECL_VERSION}"
   echo 'extension=sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/sqlsrv.ini"
   echo 'extension=pdo_sqlsrv.so' > "/etc/php/${DDEV_PHP_VERSION}/mods-available/pdo_sqlsrv.ini"
   phpenmod -v "${DDEV_PHP_VERSION}" sqlsrv pdo_sqlsrv
-else
+elif [ -n "${PIE_VERSION}" ]; then
   curl -fsSL -o /usr/local/bin/pie \
     https://github.com/php/pie/releases/latest/download/pie.phar
   chmod +x /usr/local/bin/pie
@@ -71,6 +76,9 @@ else
     export COMPOSER_AUTH="{\"github-oauth\":{\"github.com\":\"${token}\"}}"
   fi
   pie install --with-php-config="/usr/bin/php-config${DDEV_PHP_VERSION}" \
-    microsoft/sqlsrv microsoft/pdo_sqlsrv
+    "microsoft/sqlsrv:${PIE_VERSION}" "microsoft/pdo_sqlsrv:${PIE_VERSION}"
+else
+  echo "No sqlsrv/pdo_sqlsrv version is set for PHP ${DDEV_PHP_VERSION}" >&2
+  exit 1
 fi
 EOF

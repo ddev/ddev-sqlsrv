@@ -24,7 +24,7 @@ ddev restart
 
 After installation, make sure to commit the `.ddev` directory to version control.
 
-The `sqlsrv` and `pdo_sqlsrv` PHP extensions are installed for PHP 7.0 and higher. PHP 7.0-8.2 get the last [release](https://github.com/microsoft/msphpsql/releases) that supports that PHP version (via PECL), and PHP 8.3+ gets the latest release (via [PIE](https://github.com/php/pie)).
+The `sqlsrv` and `pdo_sqlsrv` PHP extensions are installed for PHP 7.0 and higher. PHP 7.0-8.3 get the last [release](https://github.com/microsoft/msphpsql/releases) that supports that PHP version (via PECL for PHP 7.0-8.2, and via [PIE](https://github.com/php/pie) for PHP 8.3), and PHP 8.4+ gets the latest release (via PIE).
 
 ## Usage
 
