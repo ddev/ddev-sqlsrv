@@ -19,6 +19,7 @@ case "${DDEV_PHP_VERSION}" in
   8.0) PECL_VERSION=5.11.1 ;;
   8.1|8.2) PECL_VERSION=5.12.0 ;;
   # 5.14.0 dropped PHP 8.3, but its composer.json still allows it, so PIE would pick it and fail to build
+  # See https://github.com/microsoft/msphpsql/issues/1696
   8.3) PIE_VERSION=5.13.3 ;;
   *) PIE_VERSION="*" ;;
 esac

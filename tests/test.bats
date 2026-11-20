@@ -142,22 +142,28 @@ teardown() {
   install_from_directory 8.2
 }
 
-# bats test_tags=php83-php85
+# bats test_tags=php83-php86
 @test "install from directory PHP 8.3" {
   set -eu -o pipefail
   install_from_directory 8.3
 }
 
-# bats test_tags=php83-php85
+# bats test_tags=php83-php86
 @test "install from directory PHP 8.4" {
   set -eu -o pipefail
   install_from_directory 8.4
 }
 
-# bats test_tags=php83-php85
+# bats test_tags=php83-php86
 @test "install from directory PHP 8.5" {
   set -eu -o pipefail
   install_from_directory 8.5
+}
+
+# bats test_tags=php83-php86
+@test "install from directory PHP 8.6" {
+  set -eu -o pipefail
+  install_from_directory 8.6
 }
 
 # bats test_tags=release
